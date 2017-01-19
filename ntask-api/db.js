@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import Sequelize from "sequelize";
-
 let db = null;
 
 module.exports = app => {
@@ -29,4 +28,4 @@ module.exports = app => {
     });
   }
   return db;
-}
+};
