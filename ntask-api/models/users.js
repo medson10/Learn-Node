@@ -1,31 +1,48 @@
-module.exports = app => {
+module.exports = (sequelize, DataType) => {
 
-  const Users = app.db.models.Users;
-
-  app.route("/user")
-  .all(app.auth.authenticate())
-  .get((req, res) => {
-    Users.findById(req.user.id, {
-      attributes: ["id", "name", "email"]
-    })
-    .then(result => res.json(result))
-    .catch(error => {
-      res.status(412).json({msg: error.message});
-    });
-  })
-  .delete((req, res) => {
-    Users.destroy({where: {id: req.user.id} })
-    .then(result => res.sendStatus(204))
-    .catch(error => {
-      res.status(412).json({msg: error.message});
-    });
+  const Users = sequelize.define("Users", {
+    id: {
+      type: DataType.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataType.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    },
+    password: {
+      type: DataType.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    },
+    email: {
+      type: DataType.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
+    }
+  }, {
+    hooks: {
+      beforeCreate: user => {
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(user.password, salt);
+      }
+    },
+    classMethods: {
+      associate: models => {
+        Users.hasMany(models.Tasks);
+      },
+      isPassword: (encodedPassword, password) => {
+        return bcrypt.compareSync(password, encodedPassword);
+      }
+    }
   });
-
-  app.post("/users", (req, res) => {
-    Users.create(req.body)
-    .then(result => res.json(result))
-    .catch(error => {
-      res.status(412).json({msg: error.message});
-    });
-  });
+  return Users;
 };
