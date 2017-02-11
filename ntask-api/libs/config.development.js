@@ -1,5 +1,5 @@
 module.exports = {
-  database: "ntask",
+  database: "ntask_test",
   username: "",
   password: "",
   params: {
@@ -9,6 +9,6 @@ module.exports = {
       underscored: true
     }
   },
-  jwtSecret: "Nta$K-AP1",
-  jwtSession: {session: false};
+  jwtSecret: "NTASK_TEST",
+  jwtSession: {session: false}
 };

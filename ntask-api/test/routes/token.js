@@ -48,8 +48,7 @@ describe("Routes: Token", () => {
           done(err);
         });
       });
-      it("throws error when email and password are blank",
-      done => {
+      it("throws error when email and password are blank", done => {
         request.post("/token")
         .expect(401)
         .end((err, res) => {
